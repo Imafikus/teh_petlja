@@ -1,0 +1,25 @@
+Your task is to make a simple Hangman game.
+
+In Hangman, the player has to guess the randomly selected word.
+Player is guessing the word letter by letter.
+
+Player has fixed number of lives. 
+
+Player must be able to see number of lives he has left and number of letters he guessed so far.
+For example: If we had a word 'aeroplane', and player had 5 lives at the beggining and his guessed letter
+was 'a' he should be able to see that 'a _ _ _ _ _ a _ _' and he should see his number of lives.
+
+Game runs until player guesses all the letters or until he loses all of his lives. If he lost you
+must display the selected word for him
+
+Words are kept in the words.txt file, you must choose one of them at random. There are some words added in
+the starter file, but you are free to add more, if you want.
+
+Another important thing is that words 'Tree', 'tree', 'TREE' and 'TrEe' all mean the same, so keep in mind
+this information when you implement your code.
+
+When starting to work on this task first try to make some key components of your program, then try to break
+down those major components into small functions.
+
+Majority of your main() function should be function calls. You are free to use whatever standard Python 3 library
+you have (if you need it for some reason).

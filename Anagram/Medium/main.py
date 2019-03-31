@@ -6,9 +6,7 @@ def get_word():
     Displays message to the user and waits
     for the user input
     """
-    anagram = input("Please input anagram: ")
-    
-    return anagram 
+    pass    
 
 def check_anagram(word):
     """
@@ -18,27 +16,14 @@ def check_anagram(word):
 
     It shouldn't matter if some letter is capital or not.
     """
-
-    check = True
-    for letter in word:
-        if not (letter.isalpha() or letter.isspace()):
-            check = False
-
-    return check
+    pass
 
 def load_words():
     """
     Opens the file specified by PATH and loads all the 
     words from file into the words list nad returns it.
     """
-
-    words = []
-    with open(PATH) as word_file:
-        for line in word_file:
-            #? we use strip to remove unnecessary whitespaces
-            words.append(line.strip())
-
-    return words
+    pass
 
 def sort_word(word):
     """
@@ -47,19 +32,7 @@ def sort_word(word):
 
     It should remove whitespaces and convert all characters to lowercase.
     """
-
-    #? python allows us to cast string into list of chars
-    #? you can sort lists by default in python by calling .sort() method
-    #? We use .lower() here because you can have for example 'A' and 'a' and those are not the same letters
-    word_list = list(word.lower())
-    word_list.sort()
-    
-    sorted_word = ""
-    for letter in word_list:
-        if letter != WHITESPACE:
-            sorted_word += letter
-    
-    return sorted_word
+    pass
 
 def find_matching_words(anagram, word_list):
     """
@@ -69,12 +42,7 @@ def find_matching_words(anagram, word_list):
     
     If there are no such words, it returns an empty list.
     """
-    viable_words = []
-    for word in word_list:
-        if sort_word(anagram) == sort_word(word):
-            viable_words.append(word)
-    
-    return viable_words
+    pass
 
 def main():
     #? Initialzation part here
@@ -84,22 +52,7 @@ def main():
     #? You also have to sort anagram which user has input and remove any spaces
     #? If your sorted anagram is equal to one or more sorted words from the words list, then you should display those words
     #? If there are no words which meet the criteria you should display a proper message to the user
-
-    valid_input = False
-
-    while not valid_input:
-        input_anagram = get_word()
-        valid_input = check_anagram(input_anagram)
-
-    words = load_words()
-    
-    viable_words = find_matching_words(input_anagram, words)
-    
-    if len(viable_words) == 0:
-        print('no solution exists')
-    else:
-        for word in viable_words:
-            print('solution:', word)
+    pass
     
 if __name__ == "__main__":
     main()

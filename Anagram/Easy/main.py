@@ -84,22 +84,6 @@ def main():
     #? You also have to sort anagram which user has input and remove any spaces
     #? If your sorted anagram is equal to one or more sorted words from the words list, then you should display those words
     #? If there are no words which meet the criteria you should display a proper message to the user
-
-    valid_input = False
-
-    while not valid_input:
-        input_anagram = get_word()
-        valid_input = check_anagram(input_anagram)
-
-    words = load_words()
-    
-    viable_words = find_matching_words(input_anagram, words)
-    
-    if len(viable_words) == 0:
-        print('no solution exists')
-    else:
-        for word in viable_words:
-            print('solution:', word)
     
 if __name__ == "__main__":
     main()

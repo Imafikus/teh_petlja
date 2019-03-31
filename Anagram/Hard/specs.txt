@@ -1,0 +1,12 @@
+Your task is to write a program which can solve an user input anagram.
+
+User must input valid words (only letters and spaces allowed), if he doesn't ask for the input again.
+
+You should display all the possible solutions for the given anagram.
+
+If no solution exists you should display appropriate message.
+
+Example: if user has input "A catnip trip" your program should output that solution is "participant"
+
+You have file 'words.txt' which contains some words and file 'example_anagrams.txt' which contains some example anagrams
+and their solution

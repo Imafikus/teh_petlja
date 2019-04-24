@@ -1,4 +1,4 @@
-
+import numpy as np
 
 def display_welcome_message():
     """
@@ -27,23 +27,38 @@ def construct_board():
     It returns it as a matrix of strings
     """
 
-    rows = 5
-    cols = 5
-    board = [rows][cols]
+    cols = 3
+    rows = 3
+
+    #? numpy has .full() function which produces matrix of the given size
+    #? ' - ' is there to tell np to fill the whole matrix with that element
+    #? dtype = "S10" just says that our matrix will store strings whose max length
+    #? is <= 10, this is done because by default only stores strings of length = 1
+    #? so whatever string we give that is longer, only first char of the string will be read
+    board = np.full([rows, cols], ' - ', dtype = "S10")
 
     i = 0
     j = 0
 
-    while(i < rows):
-    
-
-
-
+    while i < cols:
+        to_print = ""
+        
+        while j < rows:
+            #? .decode() is used because np has it's own special string encoding
+            #? while python string default is the utf-8 format, .decode() will cast from
+            #? special encoding to the utf-8
+            to_print += board[i][j].decode("utf-8")
+            j += 1
+        
+        print(to_print)
+        i += 1
+        j = 0
 
 def main():
 
     display_welcome_message()
-    first_player, second_player = get_player_names()
+    #first_player, second_player = get_player_names()
+    construct_board()
 
 
     #? Initialization part here

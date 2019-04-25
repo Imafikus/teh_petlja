@@ -16,13 +16,11 @@ def get_player_names():
     First element in the tuple is the name of the first player.
     Second element in the tuple is the name of the second player.
     """
-    print("Please input the name of the first player")
-    first_player = input()
+    first_player = input("Please input the name of the first player: ")
 
-    print("Please input the name of the second player")
-    second_player = input()
+    second_player = input("Please input the name of the second player: ")
 
-    return tuple(first_player, second_player)
+    return first_player, second_player
 
 def construct_board():
     """
@@ -39,13 +37,22 @@ def construct_board():
 
     return board
 
-def create_signs()
+def create_signs(first_player, second_player):
+    """
+    Creates and returns dictionary which contains signs which players are using,
+    it can be modifed to take custom signs.
+    """
+
+    signs = {}
+    signs[first_player] = "X"
+    signs[second_player] = "O"
+
+    return signs
 
 def print_board(board):
     """
     Prints the current board.
     """
-    print("print_board")
 
     i = 0
     j = 0
@@ -65,31 +72,40 @@ def print_board(board):
         i += 1
         j = 0
 
-def make_input(board):
+def make_input(board, player, signs):
     """
     Asks the player for input, check if the input is correct and update the board if it is.
     """
     #? This is used because we know that we have a square matrix, and that only
     #? valid cols and rows are those below, so this is the easiest solution
-    valid_fields = [0, 1, 2]
+    valid_fields = ['0', '1', '2']
 
     valid_input = False
     while(not valid_input):
-        column = int(input("Please input column: "))
-        row = int(input("Please input row: "))
-
-        if(row not in valid_fields or column not in valid_fields):
-            print("You must enter a valid field, try again")
+        player_input = input("Please input column and row, separated by space: ")
+        
+        player_input = player_input.split(" ")
+        
+        if(len(player_input) != 2): 
+            print("You must enter 2 valid fields separated by space, try again")
             continue
         
-        else:
-            if board[column][row].decode("utf-8") != EMPTY_SYMBOL:
-                print("That field already has an input, try again")
-                continue
+        col = player_input[0]
+        row = player_input[1]
+
+        if(row not in valid_fields or col not in valid_fields):
+            print("You must enter 2 valid fields, try again")
+            continue
         
-        board[column][row] = ' ' + 'H' + ' '
+        col = int(col)
+        row = int(row)
+
+        if board[col][row].decode("utf-8") != EMPTY_SYMBOL:
+            print("That field already has an input, try again")
+            continue
+        
         valid_input = True
-        print_board(board)
+        board[col][row] = ' ' + signs[player] + ' '
 
 def tie(board):
     """
@@ -114,27 +130,30 @@ def tie(board):
     print("all_filled: ", all_filled)
     return all_filled
 
+def check_win():
+    pass
+
 def main():
 
     display_welcome_message()
     first_player, second_player = get_player_names()
-    board = construct_board()
-    print_board(board)
-    print("Izasao iz print")
-
     
+    board = construct_board()
+    signs = create_signs(first_player, second_player)    
 
+    print_board(board)
 
     while not tie(board):
-        print("usao u while")
-        
+
+        print(first_player, " on the move\n")
         make_input(board, first_player, signs)
         print_board(board)
-        check_win(board)
+        #check_win(board, first_player, signs)
 
-        make_input(board)    
+        print(second_player, " on the move\n")
+        make_input(board, second_player, signs)    
         print_board(board)
-        check_win(board)
+        #check_win(board, second_player, signs)
         
 
 

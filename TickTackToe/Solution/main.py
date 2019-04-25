@@ -2,6 +2,7 @@ import numpy as np
 
 C_ROWS = 3
 C_COLS = 3
+EMPTY_SYMBOL = ' - '
 
 def display_welcome_message():
     """
@@ -29,23 +30,23 @@ def construct_board():
 
     It returns it as a matrix of strings.
     """
-
-    C_COLS = 3
-    C_ROWS = 3
-
     #? numpy has .full() function which produces matrix of the given size
-    #? ' - ' is there to tell np to fill the whole matrix with that element
+    #? EMPTY_SYMBOL is there to tell np to fill the whole matrix with that element
     #? dtype = "S10" just says that our matrix will store strings whose max length
     #? is <= 10, this is done because by default only stores strings of length = 1
     #? so whatever string we give that is longer, only first char of the string will be read
-    board = np.full([C_ROWS, C_COLS], ' - ', dtype = "S10")
+    board = np.full([C_ROWS, C_COLS], EMPTY_SYMBOL, dtype = "S10")
 
     return board
+
+def create_signs()
 
 def print_board(board):
     """
     Prints the current board.
     """
+    print("print_board")
+
     i = 0
     j = 0
 
@@ -64,22 +65,77 @@ def print_board(board):
         i += 1
         j = 0
 
-def make_input(player_name, board):
+def make_input(board):
     """
     Asks the player for input, check if the input is correct and update the board if it is.
     """
+    #? This is used because we know that we have a square matrix, and that only
+    #? valid cols and rows are those below, so this is the easiest solution
+    valid_fields = [0, 1, 2]
 
-    valid_input = False:
+    valid_input = False
     while(not valid_input):
-        
+        column = int(input("Please input column: "))
+        row = int(input("Please input row: "))
 
+        if(row not in valid_fields or column not in valid_fields):
+            print("You must enter a valid field, try again")
+            continue
+        
+        else:
+            if board[column][row].decode("utf-8") != EMPTY_SYMBOL:
+                print("That field already has an input, try again")
+                continue
+        
+        board[column][row] = ' ' + 'H' + ' '
+        valid_input = True
+        print_board(board)
+
+def tie(board):
+    """
+    Checks if the result is tied. This function is always called after
+    win checking, so that we for sure know that there are no more fields to be field
+    and that no one has won
+    """
+
+    all_filled = True
+
+    cols = 0
+    rows = 0
+
+    while cols < C_COLS:
+        while rows < C_ROWS:
+            if board[cols][rows].decode("utf-8") == EMPTY_SYMBOL: 
+                all_filled = False
+            rows += 1
+        cols += 1
+        rows = 0
+
+    print("all_filled: ", all_filled)
+    return all_filled
 
 def main():
 
     display_welcome_message()
-    #first_player, second_player = get_player_names()
+    first_player, second_player = get_player_names()
     board = construct_board()
     print_board(board)
+    print("Izasao iz print")
+
+    
+
+
+    while not tie(board):
+        print("usao u while")
+        
+        make_input(board, first_player, signs)
+        print_board(board)
+        check_win(board)
+
+        make_input(board)    
+        print_board(board)
+        check_win(board)
+        
 
 
     #? Initialization part here

@@ -75,15 +75,21 @@ def print_board(board):
 def make_input(board, player, signs):
     """
     Asks the player for input, check if the input is correct and update the board if it is.
+
+    Returns the col and row players has input
     """
     #? This is used because we know that we have a square matrix, and that only
     #? valid cols and rows are those below, so this is the easiest solution
     valid_fields = ['0', '1', '2']
 
+    #? We want to have them in the main scope so we can return their valid values
+    col = ""
+    row = ""
+
     valid_input = False
     while(not valid_input):
+
         player_input = input("Please input column and row, separated by space: ")
-        
         player_input = player_input.split(" ")
         
         if(len(player_input) != 2): 
@@ -106,6 +112,8 @@ def make_input(board, player, signs):
         
         valid_input = True
         board[col][row] = ' ' + signs[player] + ' '
+
+    return col, row
 
 def tie(board):
     """
@@ -130,8 +138,80 @@ def tie(board):
     print("all_filled: ", all_filled)
     return all_filled
 
-def check_win():
-    pass
+def check_win(board, col, row):
+    """
+    Checks if the player whose input was [col, row] has won, returns true or false
+    """
+
+    valid_fields = [0, 1, 2]
+
+    #? The easiest way to check if the current player has won is to 
+    #? see if the neighbor field on the board share the same sign
+    #? we need to check 4 directions, and although only middle field will
+    #? possibilities for all directions we will use valid_fields to check if
+    #? the neighbour fields we are checking are valid, if they are not, we will ignore them
+
+    cur_value = board[col][row].decode("utf-8")
+    print("cur_value", cur_value)
+    
+    #vertical check
+    col1 = col - 1
+    col2 = col + 1
+
+    print("vertical check: ", col1, col2)
+
+    if (col1 in valid_fields
+        and col2 in valid_fields
+        and board[col1][row].decode("utf-8") == cur_value 
+        and board[col2][row].decode("utf-8") == cur_value):
+        return True
+
+    #horizontal check
+    row1 = row - 1
+    row2 = row + 1
+
+    print("horizontal check: ", row1, row2)
+
+    if (row1 in valid_fields
+        and row2 in valid_fields
+        and board[col][row1].decode("utf-8") == cur_value 
+        and board[col][row2].decode("utf-8") == cur_value):
+        return True
+
+    #upper left to lower right diagonal check
+    #? upper left part
+    col1 = col - 1
+    row1 = row - 1
+    #? lower right part
+    col2 = col + 1
+    row2 = row + 1
+
+    if (row1 in valid_fields
+        and row2 in valid_fields
+        and col1 in valid_fields
+        and col2 in valid_fields
+        and board[col1][row1].decode("utf-8") == cur_value 
+        and board[col2][row2].decode("utf-8") == cur_value):
+        return True
+
+    #upper right to lower left diagonal check
+    #? upper right part
+    col1 = col + 1
+    row1 = row - 1
+    #? lower left part
+    col2 = col - 1
+    row2 = row + 1
+
+    if (row1 in valid_fields
+        and row2 in valid_fields
+        and col1 in valid_fields
+        and col2 in valid_fields
+        and board[col1][row1].decode("utf-8") == cur_value 
+        and board[col2][row2].decode("utf-8") == cur_value):
+        return True
+
+    #? If everything has failed, we are returning false
+    return False
 
 def main():
 
@@ -142,20 +222,32 @@ def main():
     signs = create_signs(first_player, second_player)    
 
     print_board(board)
+    winner = ""
 
-    while not tie(board):
-
-        print(first_player, " on the move\n")
-        make_input(board, first_player, signs)
-        print_board(board)
-        #check_win(board, first_player, signs)
-
-        print(second_player, " on the move\n")
-        make_input(board, second_player, signs)    
-        print_board(board)
-        #check_win(board, second_player, signs)
+    while not tie(board) and winner == "":
+        print(first_player, "on the move\n")
         
+        col, row = make_input(board, first_player, signs)
+        print_board(board)
+        
+        if(check_win(board, col, row)):
+            winner = first_player
+            continue
 
+        print(second_player, "on the move\n")
+        
+        col, row = make_input(board, second_player, signs)    
+        print_board(board)
+        
+        if(check_win(board, col, row)):
+            winner = second_player
+            continue
+
+    if(winner == ""):
+        print("Game was a tie")
+    
+    else:
+        print(winner, "has won")
 
     #? Initialization part here
     #? You need to display welcome message
@@ -178,7 +270,6 @@ def main():
     #? If the .txt file already exist, it must be updated with new results
     #? Example file you can use as pattern (but you don't have to) is example_saved_data.txt
 
-
     #? Appropriate message is displayed after the game has finished (based on who won (or if it was a tie))
     #? After 'enter' key is pressed current game statistics are show in the following format
         #? - Number of wins for the first player, win percentage of the first player
@@ -193,7 +284,7 @@ def main():
         #? If they want to play another game, everything except welcome message is repeated
         #? If they want to exit, program displays goodbye message and finishes
         
-
+    
 
 if __name__ == "__main__":
     main()

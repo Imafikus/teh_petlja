@@ -1,5 +1,8 @@
 import numpy as np
 
+C_ROWS = 3
+C_COLS = 3
+
 def display_welcome_message():
     """
     Displays welcome message for the players.
@@ -24,29 +27,36 @@ def construct_board():
     """
     Creates empty tick-tack-toe board
 
-    It returns it as a matrix of strings
+    It returns it as a matrix of strings.
     """
 
-    cols = 3
-    rows = 3
+    C_COLS = 3
+    C_ROWS = 3
 
     #? numpy has .full() function which produces matrix of the given size
     #? ' - ' is there to tell np to fill the whole matrix with that element
     #? dtype = "S10" just says that our matrix will store strings whose max length
     #? is <= 10, this is done because by default only stores strings of length = 1
     #? so whatever string we give that is longer, only first char of the string will be read
-    board = np.full([rows, cols], ' - ', dtype = "S10")
+    board = np.full([C_ROWS, C_COLS], ' - ', dtype = "S10")
 
+    return board
+
+def print_board(board):
+    """
+    Prints the current board.
+    """
     i = 0
     j = 0
 
-    while i < cols:
+    while i < C_COLS:
         to_print = ""
         
-        while j < rows:
+        while j < C_ROWS:
             #? .decode() is used because np has it's own special string encoding
             #? while python string default is the utf-8 format, .decode() will cast from
             #? special encoding to the utf-8
+            #? if we don't do that, we cannot add string to to_print
             to_print += board[i][j].decode("utf-8")
             j += 1
         
@@ -54,11 +64,22 @@ def construct_board():
         i += 1
         j = 0
 
+def make_input(player_name, board):
+    """
+    Asks the player for input, check if the input is correct and update the board if it is.
+    """
+
+    valid_input = False:
+    while(not valid_input):
+        
+
+
 def main():
 
     display_welcome_message()
     #first_player, second_player = get_player_names()
-    construct_board()
+    board = construct_board()
+    print_board(board)
 
 
     #? Initialization part here

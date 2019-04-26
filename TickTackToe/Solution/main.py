@@ -4,6 +4,22 @@ C_ROWS = 3
 C_COLS = 3
 EMPTY_SYMBOL = ' - '
 
+#? Used to map 2D coordinates to 1D array we use for board representation
+BOARD_FIELDS = {
+    (0, 0) : 0,
+    (0, 1) : 1,
+    (0, 2) : 2,
+    
+    (1, 0) : 3,
+    (1, 1) : 4,
+    (1, 2) : 5,
+    
+    (2, 0) : 6,
+    (2, 1) : 7,
+    (2, 2) : 8
+}
+
+
 def display_welcome_message():
     """
     Displays welcome message for the players.
@@ -28,12 +44,14 @@ def construct_board():
 
     It returns it as a matrix of strings.
     """
-    #? numpy has .full() function which produces matrix of the given size
-    #? EMPTY_SYMBOL is there to tell np to fill the whole matrix with that element
-    #? dtype = "S10" just says that our matrix will store strings whose max length
-    #? is <= 10, this is done because by default only stores strings of length = 1
-    #? so whatever string we give that is longer, only first char of the string will be read
-    board = np.full([C_ROWS, C_COLS], EMPTY_SYMBOL, dtype = "S10")
+
+    #? We will construct board as array of strings, because it's the easiest way to do it
+    board = []
+    
+    i = 0
+    while i < C_ROWS * C_COLS:
+        board.append(EMPTY_SYMBOL)
+        i += 1
 
     return board
 
@@ -57,22 +75,22 @@ def print_board(board):
     i = 0
     j = 0
 
-    while i < C_COLS:
-        to_print = ""
+    to_print = ""
+    while i < C_COLS * C_ROWS:
         
-        while j < C_ROWS:
-            #? .decode() is used because np has it's own special string encoding
-            #? while python string default is the utf-8 format, .decode() will cast from
-            #? special encoding to the utf-8
-            #? if we don't do that, we cannot add string to to_print
-            to_print += board[i][j].decode("utf-8")
-            j += 1
+        to_print += board[i]
+        j += 1
         
-        print(to_print)
+        #? if the j is 3, we know that we must go to the new row
+        if j == 3:
+            to_print += "\n"
+            j = 0        
+        
         i += 1
-        j = 0
 
-def make_input(board, player, signs):
+    print(to_print)
+
+def make_input(board, player, player_sign):
     """
     Asks the player for input, check if the input is correct and update the board if it is.
 
@@ -83,13 +101,13 @@ def make_input(board, player, signs):
     valid_fields = ['0', '1', '2']
 
     #? We want to have them in the main scope so we can return their valid values
-    col = ""
     row = ""
+    col = ""
 
     valid_input = False
     while(not valid_input):
 
-        player_input = input("Please input column and row, separated by space: ")
+        player_input = input("Please input row and column, separated by space: ")
         player_input = player_input.split(" ")
         
         if(len(player_input) != 2): 
@@ -99,21 +117,21 @@ def make_input(board, player, signs):
         col = player_input[0]
         row = player_input[1]
 
-        if(row not in valid_fields or col not in valid_fields):
+        if((row not in valid_fields or col not in valid_fields)):
             print("You must enter 2 valid fields, try again")
             continue
         
         col = int(col)
         row = int(row)
 
-        if board[col][row].decode("utf-8") != EMPTY_SYMBOL:
+        if board[BOARD_FIELDS[(row, col)]] != EMPTY_SYMBOL:
             print("That field already has an input, try again")
             continue
         
         valid_input = True
-        board[col][row] = ' ' + signs[player] + ' '
+        board[BOARD_FIELDS[(row, col)]] = ' ' + player_sign + ' '
 
-    return col, row
+    return row, col
 
 def tie(board):
     """
@@ -121,133 +139,34 @@ def tie(board):
     win checking, so that we for sure know that there are no more fields to be field
     and that no one has won
     """
-
-    all_filled = True
-
-    cols = 0
-    rows = 0
-
-    while cols < C_COLS:
-        while rows < C_ROWS:
-            if board[cols][rows].decode("utf-8") == EMPTY_SYMBOL: 
-                all_filled = False
-            rows += 1
-        cols += 1
-        rows = 0
-
-    print("all_filled: ", all_filled)
-    return all_filled
+    pass
 
 def check_win(board, col, row):
     """
     Checks if the player whose input was [col, row] has won, returns true or false
     """
-
-    valid_fields = [0, 1, 2]
-
-    #? The easiest way to check if the current player has won is to 
-    #? see if the neighbor field on the board share the same sign
-    #? we need to check 4 directions, and although only middle field will
-    #? possibilities for all directions we will use valid_fields to check if
-    #? the neighbour fields we are checking are valid, if they are not, we will ignore them
-
-    cur_value = board[col][row].decode("utf-8")
-    print("cur_value", cur_value)
-    
-    #vertical check
-    col1 = col - 1
-    col2 = col + 1
-
-    print("vertical check: ", col1, col2)
-
-    if (col1 in valid_fields
-        and col2 in valid_fields
-        and board[col1][row].decode("utf-8") == cur_value 
-        and board[col2][row].decode("utf-8") == cur_value):
-        return True
-
-    #horizontal check
-    row1 = row - 1
-    row2 = row + 1
-
-    print("horizontal check: ", row1, row2)
-
-    if (row1 in valid_fields
-        and row2 in valid_fields
-        and board[col][row1].decode("utf-8") == cur_value 
-        and board[col][row2].decode("utf-8") == cur_value):
-        return True
-
-    #upper left to lower right diagonal check
-    #? upper left part
-    col1 = col - 1
-    row1 = row - 1
-    #? lower right part
-    col2 = col + 1
-    row2 = row + 1
-
-    if (row1 in valid_fields
-        and row2 in valid_fields
-        and col1 in valid_fields
-        and col2 in valid_fields
-        and board[col1][row1].decode("utf-8") == cur_value 
-        and board[col2][row2].decode("utf-8") == cur_value):
-        return True
-
-    #upper right to lower left diagonal check
-    #? upper right part
-    col1 = col + 1
-    row1 = row - 1
-    #? lower left part
-    col2 = col - 1
-    row2 = row + 1
-
-    if (row1 in valid_fields
-        and row2 in valid_fields
-        and col1 in valid_fields
-        and col2 in valid_fields
-        and board[col1][row1].decode("utf-8") == cur_value 
-        and board[col2][row2].decode("utf-8") == cur_value):
-        return True
-
-    #? If everything has failed, we are returning false
-    return False
+    pass
 
 def main():
+
+    print(BOARD_FIELDS[(0, 0)])
+
+    board = construct_board()
+    print(board)
+    print(board[BOARD_FIELDS[(0, 0)]])
+
 
     display_welcome_message()
     first_player, second_player = get_player_names()
     
-    board = construct_board()
+
     signs = create_signs(first_player, second_player)    
+    print(signs)
 
+    make_input(board, first_player, signs[first_player])
+
+    #print(board)
     print_board(board)
-    winner = ""
-
-    while not tie(board) and winner == "":
-        print(first_player, "on the move\n")
-        
-        col, row = make_input(board, first_player, signs)
-        print_board(board)
-        
-        if(check_win(board, col, row)):
-            winner = first_player
-            continue
-
-        print(second_player, "on the move\n")
-        
-        col, row = make_input(board, second_player, signs)    
-        print_board(board)
-        
-        if(check_win(board, col, row)):
-            winner = second_player
-            continue
-
-    if(winner == ""):
-        print("Game was a tie")
-    
-    else:
-        print(winner, "has won")
 
     #? Initialization part here
     #? You need to display welcome message
@@ -255,7 +174,7 @@ def main():
     #? You need to save those names for future use
     #? You need to construct empty 3x3 tick-tack-toe board
 
-    #? Game loop and logic here. Loop must go on until it's a tie or one of the players has one
+    #? Game loop and logic here. Loop must go on until it's a tie or one of the players has won
         
         #? Check if it's a tie
         
@@ -267,11 +186,11 @@ def main():
     
     #? When the game is finished, result is saved in /results folder
     #? IMPORTANT: Every pair of players must have his own .txt files (order of the players is irrelevant), player names are not case sensitive
-    #? If the .txt file already exist, it must be updated with new results
+    #? If the .txt file already exist, it must be updated with the new results
     #? Example file you can use as pattern (but you don't have to) is example_saved_data.txt
 
-    #? Appropriate message is displayed after the game has finished (based on who won (or if it was a tie))
-    #? After 'enter' key is pressed current game statistics are show in the following format
+    #? Appropriate message is displayed after the game has finished (based on who won, or if it was a tie)
+    #? After 'enter' key is pressed current game statistics are show in the following format:
         #? - Number of wins for the first player, win percentage of the first player
         #? - Number of wins for the second player, win percentage of the second player
         #? - Number of tied games, tie games percentage

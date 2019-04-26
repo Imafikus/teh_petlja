@@ -139,13 +139,23 @@ def tie(board):
     win checking, so that we for sure know that there are no more fields to be field
     and that no one has won
     """
-    pass
+    all_filled = True
+    
+    #? Another way this loop can be done is to 
+    #? go directly to values which corespond to
+    #? dictionary keys.
+    #? we can do that by typing: for key, value in dict.items(): do something
+    for pos in BOARD_FIELDS:
+        if(board[BOARD_FIELDS[pos]] == EMPTY_SYMBOL):
+            all_filled = False
+
+    return  all_filled
 
 def check_win(board, col, row):
     """
     Checks if the player whose input was [col, row] has won, returns true or false
     """
-    pass
+    
 
 def main():
 
@@ -163,10 +173,8 @@ def main():
     signs = create_signs(first_player, second_player)    
     print(signs)
 
-    make_input(board, first_player, signs[first_player])
+    
 
-    #print(board)
-    print_board(board)
 
     #? Initialization part here
     #? You need to display welcome message

@@ -1,8 +1,10 @@
-import numpy as np
+import os
 
 C_ROWS = 3
 C_COLS = 3
 EMPTY_SYMBOL = ' - '
+DIR_PATH = "results"
+FILE_SUFIX = ".txt"
 
 #? Used to map 2D coordinates to 1D array we use for board representation
 BOARD_FIELDS = {
@@ -62,7 +64,7 @@ def create_signs(first_player, second_player):
     """
 
     signs = {}
-    signs[first_player] = " X " 
+    signs[first_player] = " X "  
     signs[second_player] = " O "
 
     return signs
@@ -189,6 +191,63 @@ def check_win(board, sign):
     #? If we are here, we know for sure that win hasn't happened
     return False
 
+def record_result(first_player, second_player, winner):
+    """
+    Records the result for the current game. Tries to write into the 
+    file which is named first_player_second_player and which is stored in
+    the directory results. 
+    If the file with the same name (or with the inverted name) exists, it writes into 
+    that file, otherwise makes a new file. 
+    File name is all lower case.
+    """
+
+    file_name = first_player.lower() + second_player.lower() + FILE_SUFIX
+    file_path = os.path.join(DIR_PATH, file_name)
+    print(file_path)
+
+    first_player_won = 0
+    second_player_won  = 0
+    tie = 0
+
+    #? we are using these variables so we can easily write updated data to files
+    #? because logic is the same, only difference is if the file already existed
+    if winner == first_player:
+            first_player_won += 1
+        
+    elif winner == second_player:
+        second_player_won += 1
+        
+    else:
+        tie += 1
+
+    #! needs inverted name check
+
+    #? If the file exists, we wanna get existing data, and after that we want to update that data
+    if(os.path.isfile(file_path)):
+        data = open(file_path, 'w+')
+
+        games_data = data.readlines()
+        print(games_data)
+        first_player_wins = int(games_data[0])
+        second_player_wins = int(games_data[1])
+        ties = int(games_data[2])
+
+        #? we are checking to see which result we need to update
+        data.write(str(first_player_wins + first_player_won) + "\n")
+        data.write(str(second_player_wins + second_player_won) + "\n")
+        data.write(str(ties + tie) + "\n")
+        data.close()
+
+    #? if the file doesn't exist, we want to create new file and write
+    #? just the data from the latest game
+    else:
+        data = open(file_path, "w")
+        data.writelines(str(first_player_won) + "\n")
+        data.writelines(str(second_player_won) + "\n")
+        data.writelines(str(tie) + "\n")
+        data.close()
+
+
 def main():
 
     print(BOARD_FIELDS[(0, 0)])
@@ -202,6 +261,8 @@ def main():
 
     first_player_move = True
     winner = ""
+    record_result(first_player, second_player, winner)
+
 
     while(not tie(board) and winner == ""):
         
@@ -222,11 +283,14 @@ def main():
             first_player_move = True
         
     if(winner == ""):
-        print("It's a tie")
-    
+        print("It's a tie!")
+        
     else:
         print("Winner is: ", winner)
 
+    display_current_stats()
+    playing_again = ask_for_another_game()
+    
 
     #? Initialization part here
     #? You need to display welcome message
@@ -255,10 +319,9 @@ def main():
         #? - Number of wins for the second player, win percentage of the second player
         #? - Number of tied games, tie games percentage
         #? eg. if there was 4 games and first player won 2, second won 1, and the 1 was tied the the output would be
-            #? first_player_name: 2 wins, 50% of all games
-            #? second_player_name: 1 win, 25% of all games
+            #? first_player_name wins: 2, 50% of all games
+            #? second_player_name wins: 1, 25% of all games
             #? Number of tied games: 1, 25% of all games
-            #? Keep in mind that your generated sentences must be grammatically correct
         #? After this there is an additional message which asks the players if they want to play another game or they want to quit
         #? If they want to play another game, everything except welcome message is repeated
         #? If they want to exit, program displays goodbye message and finishes

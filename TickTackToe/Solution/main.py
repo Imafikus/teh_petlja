@@ -62,8 +62,8 @@ def create_signs(first_player, second_player):
     """
 
     signs = {}
-    signs[first_player] = "X"
-    signs[second_player] = "O"
+    signs[first_player] = " X " 
+    signs[second_player] = " O "
 
     return signs
 
@@ -104,6 +104,8 @@ def make_input(board, player, player_sign):
     row = ""
     col = ""
 
+    print(player, " on the move")
+
     valid_input = False
     while(not valid_input):
 
@@ -114,29 +116,29 @@ def make_input(board, player, player_sign):
             print("You must enter 2 valid fields separated by space, try again")
             continue
         
-        col = player_input[0]
-        row = player_input[1]
+        row = player_input[0]
+        col = player_input[1]
 
         if((row not in valid_fields or col not in valid_fields)):
             print("You must enter 2 valid fields, try again")
             continue
         
-        col = int(col)
         row = int(row)
+        col = int(col)
 
         if board[BOARD_FIELDS[(row, col)]] != EMPTY_SYMBOL:
             print("That field already has an input, try again")
             continue
         
         valid_input = True
-        board[BOARD_FIELDS[(row, col)]] = ' ' + player_sign + ' '
-
-    return row, col
+        board[BOARD_FIELDS[(row, col)]] = player_sign
+        
+    print_board(board)
 
 def tie(board):
     """
     Checks if the result is tied. This function is always called after
-    win checking, so that we for sure know that there are no more fields to be field
+    win checking, so that we for sure know that there are no more fields to be filled
     and that no one has won
     """
     all_filled = True
@@ -151,29 +153,79 @@ def tie(board):
 
     return  all_filled
 
-def check_win(board, col, row):
+def check_win(board, sign):
     """
-    Checks if the player whose input was [col, row] has won, returns true or false
+    Checks if the player who had last input has won, returns true or false
     """
     
+    #? All horizontal checks
+    if(board[0] == board[1] == board[2] == sign):
+        return True
+    
+    if(board[3] == board[4] == board[5] == sign):
+        return True
+    
+    if(board[6] == board[7] == board[8] == sign):
+        return True
+
+    #? All vertical checks
+    if(board[0] == board[3] == board[6] == sign):
+        return True
+    
+    if(board[1] == board[4] == board[7] == sign):
+        return True
+
+    if(board[2] == board[5] == board[8] == sign):
+        return True
+
+    #? upper left to lower right diagonal check
+    if(board[0] == board[4] == board[8] == sign):
+        return True
+
+    #? upper right to lower left diagonal check
+    if(board[2] == board[4] == board[6] == sign):
+        return True
+
+    #? If we are here, we know for sure that win hasn't happened
+    return False
 
 def main():
 
     print(BOARD_FIELDS[(0, 0)])
 
     board = construct_board()
-    print(board)
-    print(board[BOARD_FIELDS[(0, 0)]])
-
-
+    
     display_welcome_message()
     first_player, second_player = get_player_names()
     
-
     signs = create_signs(first_player, second_player)    
-    print(signs)
 
+    first_player_move = True
+    winner = ""
+
+    while(not tie(board) and winner == ""):
+        
+        if(first_player_move):
+            make_input(board, first_player, signs[first_player])
+            
+            if(check_win(board, signs[first_player])):
+                winner = first_player
+            
+            first_player_move = False
+        
+        else:
+            make_input(board, second_player, signs[second_player])
+            
+            if(check_win(board, signs[second_player])):
+                winner = second_player
+            
+            first_player_move = True
+        
+    if(winner == ""):
+        print("It's a tie")
     
+    else:
+        print("Winner is: ", winner)
 
 
     #? Initialization part here

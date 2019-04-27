@@ -1,4 +1,4 @@
-import os
+import os   
 
 C_ROWS = 3
 C_COLS = 3
@@ -20,7 +20,6 @@ BOARD_FIELDS = {
     (2, 1) : 7,
     (2, 2) : 8
 }
-
 
 def display_welcome_message():
     """
@@ -221,27 +220,27 @@ def record_result(first_player, second_player, winner):
     """
 
     file_path = ""
-    file_already_exists = False
+    #! FIXME
+    # file_already_exists = False
 
-    #? check for file whose name starts with first player
-    if(file_exists(first_player, second_player)):
-        print("prvi_drugi")
-        file_path = create_file_path(first_player, second_player)
-        file_already_exists = True
+    # #? check for file whose name starts with first player
+    # if(file_exists(first_player, second_player)):
+    #     print("prvi_drugi")
+    #     file_path = create_file_path(first_player, second_player)
+    #     file_already_exists = True
     
-    #! Porgresno racuna ovo!
-    #? check for file whose name starts with second player
-    elif(file_exists(second_player, first_player) and not file_already_exists):
-        print("drugi_drugi")        
-        file_path = create_file_path(second_player, first_player)
-        file_already_exists = True
+    # #? check for file whose name starts with second player
+    # elif(file_exists(second_player, first_player)):
+    #     print("drugi_drugi")        
+    #     file_path = create_file_path(second_player, first_player)
+    #     file_already_exists = True
 
-    #? If are here, we know that the file doesn't exist yet,
-    #? so we are making file whose name starts with the first player 
-    #? name (could be the second, it doesn't matter)    
-    else:
-        print("ne_postoji")
-        file_path = create_file_path(first_player, second_player)
+    # #? If are here, we know that the file doesn't exist yet,
+    # #? so we are making file whose name starts with the first player 
+    # #? name (could be the second, it doesn't matter)    
+    # else:
+    #     print("ne_postoji")
+    file_path = create_file_path(first_player, second_player)
 
     print("file_path: ", file_path)
 
@@ -260,11 +259,9 @@ def record_result(first_player, second_player, winner):
     else:
         tie += 1
 
-    #! needs inverted name check
-
     #? If the file exists, we wanna get existing data, and after that we want to update that data
-    if(file_already_exists):
-        "Otvara se postojeci fajl"
+    if(os.path.isfile(file_path)):
+        print("Otvara se postojeci fajl")
         data = open(file_path, 'r+')
 
         games_data = data.readlines()
@@ -293,6 +290,33 @@ def record_result(first_player, second_player, winner):
         data.writelines(str(tie) + "\n")
         data.close()
 
+def display_current_stats(first_player, second_player):
+    """
+    Opens the file for the players, and reads displays the game data following format:
+
+    - Number of wins for the first player, win percentage of the first player
+    - Number of wins for the second player, win percentage of the second player
+    - Number of tied games, tie games percentage
+    """
+    print("display_current_stats")
+
+    file_path = create_file_path(first_player, second_player)
+    data = open(file_path, "r")
+    games_data = data.readlines()
+
+    first_player_wins = int(games_data[0])
+    second_player_wins = int(games_data[1])
+    tied_games = int(games_data[2])
+
+    all_games = first_player_wins + second_player_wins + tied_games
+
+    first_player_percentage = round(first_player_wins / all_games, 2) * 100
+    second_player_percentage = round(second_player_wins / all_games, 2) * 100 
+    tied_games_percentage = round(tied_games / all_games, 2) * 100
+
+    print("First player wins:", first_player_wins, ",", first_player_percentage, "% of all games") 
+    print("Second player wins:", second_player_wins, ",", second_player_percentage, "% of all games") 
+    print("Tied games:", tied_games, ",", tied_games_percentage, "% of all games") 
 
 def main():
 
@@ -309,8 +333,7 @@ def main():
     
     #! To be removed
     winner = ""
-    record_result(first_player, second_player, winner)
-
+    record_result(first_player, second_player, second_player)
 
     # while(not tie(board) and winner == ""):
         
@@ -339,7 +362,7 @@ def main():
     # record_result(first_player, second_player, winner)
 
 
-    # display_current_stats()
+    display_current_stats(first_player, second_player)
     # playing_again = ask_for_another_game()
     
 

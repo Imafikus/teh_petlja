@@ -220,17 +220,27 @@ def record_result(first_player, second_player, winner):
     File name is all lower case.
     """
 
+    file_path = ""
     file_already_exists = False
 
+    #? check for file whose name starts with first player
     if(file_exists(first_player, second_player)):
+        print("prvi_drugi")
         file_path = create_file_path(first_player, second_player)
         file_already_exists = True
     
-    elif(file_exists(second_player, first_player)):
-        file_path = create_file_path(first_player, second_player)
+    #! Porgresno racuna ovo!
+    #? check for file whose name starts with second player
+    elif(file_exists(second_player, first_player) and not file_already_exists):
+        print("drugi_drugi")        
+        file_path = create_file_path(second_player, first_player)
         file_already_exists = True
-    
+
+    #? If are here, we know that the file doesn't exist yet,
+    #? so we are making file whose name starts with the first player 
+    #? name (could be the second, it doesn't matter)    
     else:
+        print("ne_postoji")
         file_path = create_file_path(first_player, second_player)
 
     print("file_path: ", file_path)
@@ -254,17 +264,20 @@ def record_result(first_player, second_player, winner):
 
     #? If the file exists, we wanna get existing data, and after that we want to update that data
     if(file_already_exists):
-        data = open(file_path, 'w+')
+        "Otvara se postojeci fajl"
+        data = open(file_path, 'r+')
 
         games_data = data.readlines()
         print(games_data)
         first_player_wins = int(games_data[0])
         second_player_wins = int(games_data[1])
         ties = int(games_data[2])
+        data.close()
 
         #? we are checking to see which result we need to update
         #? we are adding values everywhere because we know that only one 
         #? value will be 1, others will be zero, so they won't change anything
+        data = open(file_path, "w")
         data.write(str(first_player_wins + first_player_won) + "\n")
         data.write(str(second_player_wins + second_player_won) + "\n")
         data.write(str(ties + tie) + "\n")
@@ -273,6 +286,7 @@ def record_result(first_player, second_player, winner):
     #? if the file doesn't exist, we want to create new file and write
     #? just the data from the latest game
     else:
+        print("Pravi se novi fajl")
         data = open(file_path, "w")
         data.writelines(str(first_player_won) + "\n")
         data.writelines(str(second_player_won) + "\n")
@@ -298,35 +312,35 @@ def main():
     record_result(first_player, second_player, winner)
 
 
-    while(not tie(board) and winner == ""):
+    # while(not tie(board) and winner == ""):
         
-        if(first_player_move):
-            make_input(board, first_player, signs[first_player])
+    #     if(first_player_move):
+    #         make_input(board, first_player, signs[first_player])
             
-            if(check_win(board, signs[first_player])):
-                winner = first_player
+    #         if(check_win(board, signs[first_player])):
+    #             winner = first_player
             
-            first_player_move = False
+    #         first_player_move = False
         
-        else:
-            make_input(board, second_player, signs[second_player])
+    #     else:
+    #         make_input(board, second_player, signs[second_player])
             
-            if(check_win(board, signs[second_player])):
-                winner = second_player
+    #         if(check_win(board, signs[second_player])):
+    #             winner = second_player
             
-            first_player_move = True
+    #         first_player_move = True
         
-    if(winner == ""):
-        print("It's a tie!")
+    # if(winner == ""):
+    #     print("It's a tie!")
         
-    else:
-        print("Winner is: ", winner)
+    # else:
+    #     print("Winner is: ", winner)
 
-    record_result(first_player, second_player, winner)
+    # record_result(first_player, second_player, winner)
 
 
-    display_current_stats()
-    playing_again = ask_for_another_game()
+    # display_current_stats()
+    # playing_again = ask_for_another_game()
     
 
     #? Initialization part here

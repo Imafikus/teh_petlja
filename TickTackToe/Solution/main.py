@@ -318,52 +318,68 @@ def display_current_stats(first_player, second_player):
     print("Second player wins:", second_player_wins, ",", second_player_percentage, "% of all games") 
     print("Tied games:", tied_games, ",", tied_games_percentage, "% of all games") 
 
-def main():
+def ask_for_another_game():
+    """
+    Asks the players if they want to play another game
+    returns boolean
+    """
 
-    print(BOARD_FIELDS[(0, 0)])
-
-    board = construct_board()
+    valid_answers = ["y", "n"]
+    answer = ""
     
+    while(answer not in valid_answers):
+        print("Do you want to play another game [y / n]?")
+        answer = input()
+    
+    if(answer.lower() == "y"):
+        print("Starting a new game!")
+        return True
+    else:
+        print("Goodbye, thanks for playing!")
+        return False
+
+def main():    
     display_welcome_message()
     first_player, second_player = get_player_names()
-    
-    signs = create_signs(first_player, second_player)    
+    playing_again = True
 
-    first_player_move = True
-    
-    #! To be removed
-    winner = ""
-    record_result(first_player, second_player, second_player)
-
-    # while(not tie(board) and winner == ""):
+    while(playing_again):
         
-    #     if(first_player_move):
-    #         make_input(board, first_player, signs[first_player])
-            
-    #         if(check_win(board, signs[first_player])):
-    #             winner = first_player
-            
-    #         first_player_move = False
-        
-    #     else:
-    #         make_input(board, second_player, signs[second_player])
-            
-    #         if(check_win(board, signs[second_player])):
-    #             winner = second_player
-            
-    #         first_player_move = True
-        
-    # if(winner == ""):
-    #     print("It's a tie!")
-        
-    # else:
-    #     print("Winner is: ", winner)
+        winner = ""    
+        signs = create_signs(first_player, second_player)    
+        board = construct_board()
 
-    # record_result(first_player, second_player, winner)
+        first_player_move = True
+        
+        while(not tie(board) and winner == ""):
+            
+            if(first_player_move):
+                make_input(board, first_player, signs[first_player])
+                
+                if(check_win(board, signs[first_player])):
+                    winner = first_player
+                
+                first_player_move = False
+            
+            else:
+                make_input(board, second_player, signs[second_player])
+                
+                if(check_win(board, signs[second_player])):
+                    winner = second_player
+                
+                first_player_move = True
+            
+        if(winner == ""):
+            print("It's a tie!")
+            
+        else:
+            print("Winner is: ", winner)
+
+        record_result(first_player, second_player, winner)
 
 
-    display_current_stats(first_player, second_player)
-    # playing_again = ask_for_another_game()
+        display_current_stats(first_player, second_player)
+        playing_again = ask_for_another_game()
     
 
     #? Initialization part here
@@ -388,7 +404,7 @@ def main():
     #? Example file you can use as pattern (but you don't have to) is example_saved_data.txt
 
     #? Appropriate message is displayed after the game has finished (based on who won, or if it was a tie)
-    #? After 'enter' key is pressed current game statistics are show in the following format:
+    #? After that all games statistics are shown in the following format:
         #? - Number of wins for the first player, win percentage of the first player
         #? - Number of wins for the second player, win percentage of the second player
         #? - Number of tied games, tie games percentage

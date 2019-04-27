@@ -191,6 +191,25 @@ def check_win(board, sign):
     #? If we are here, we know for sure that win hasn't happened
     return False
 
+def create_file_path(first_player, second_player):
+    """
+    Creates appropriate file path as stated in the specification
+    File path is: first_player+second_player+FILE_SUFIX 
+    Returns that file as a string
+    """
+    file_name = first_player.lower() + second_player.lower() + FILE_SUFIX
+    file_path = os.path.join(DIR_PATH, file_name)
+    return file_path
+
+def file_exists(first_player, second_player):
+    """
+    Checks if file exists.
+    If it does, return true, else return false
+
+    """
+    file_path = create_file_path(first_player, second_player)
+    return(os.path.isfile(file_path))
+
 def record_result(first_player, second_player, winner):
     """
     Records the result for the current game. Tries to write into the 
@@ -201,9 +220,20 @@ def record_result(first_player, second_player, winner):
     File name is all lower case.
     """
 
-    file_name = first_player.lower() + second_player.lower() + FILE_SUFIX
-    file_path = os.path.join(DIR_PATH, file_name)
-    print(file_path)
+    file_already_exists = False
+
+    if(file_exists(first_player, second_player)):
+        file_path = create_file_path(first_player, second_player)
+        file_already_exists = True
+    
+    elif(file_exists(second_player, first_player)):
+        file_path = create_file_path(first_player, second_player)
+        file_already_exists = True
+    
+    else:
+        file_path = create_file_path(first_player, second_player)
+
+    print("file_path: ", file_path)
 
     first_player_won = 0
     second_player_won  = 0
@@ -223,7 +253,7 @@ def record_result(first_player, second_player, winner):
     #! needs inverted name check
 
     #? If the file exists, we wanna get existing data, and after that we want to update that data
-    if(os.path.isfile(file_path)):
+    if(file_already_exists):
         data = open(file_path, 'w+')
 
         games_data = data.readlines()
@@ -233,6 +263,8 @@ def record_result(first_player, second_player, winner):
         ties = int(games_data[2])
 
         #? we are checking to see which result we need to update
+        #? we are adding values everywhere because we know that only one 
+        #? value will be 1, others will be zero, so they won't change anything
         data.write(str(first_player_wins + first_player_won) + "\n")
         data.write(str(second_player_wins + second_player_won) + "\n")
         data.write(str(ties + tie) + "\n")
@@ -260,6 +292,8 @@ def main():
     signs = create_signs(first_player, second_player)    
 
     first_player_move = True
+    
+    #! To be removed
     winner = ""
     record_result(first_player, second_player, winner)
 
@@ -287,6 +321,9 @@ def main():
         
     else:
         print("Winner is: ", winner)
+
+    record_result(first_player, second_player, winner)
+
 
     display_current_stats()
     playing_again = ask_for_another_game()

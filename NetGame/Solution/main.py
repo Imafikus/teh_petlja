@@ -206,6 +206,25 @@ def show_tie_message():
 
 def main():
     """main method"""
+
+    # First, configure the smor library
+    # Then ask the player for the name of the game room
+    # Then check if you are the first player in the game
+    #     If you are, wait for the other player
+    # Then set the board up
+    # If you are the first player, its your turn
+    # As long as the game is not done do the following:
+    #     Show the board to the player
+    #     If it's your turn
+    #         ask the player for the move, and send it to the other player
+    #         otherwise, get the move from the other player
+    #     perform that move on the board
+    #     now its other players turn
+    #
+    #     show the board one last time
+    #     get the winner, and show the correct message
+
+
     configure_smor()
     
     room_name = get_room_name()

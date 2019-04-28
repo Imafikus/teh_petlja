@@ -7,21 +7,21 @@ WE = 1
 THEY = -1
 
 def configure_smor():
-    """sets up the SMOR library configuration"""
+    """Sets up the SMOR library configuration"""
     sm.config('lambda-lab.cf')
 
 def get_room_name():
-    """asks the player for game room name, and returns it"""
+    """Asks the player for game room name, and returns it"""
     return input('Enter game room name: ')
 
 def is_first_player(room_name):
-    """returns True if we are the first player (connected first to the server).
+    """Returns True if we are the first player (connected first to the server).
 
-    first we try to get from `game/<room_name>/first` mailbox. 
+    First we try to get from `game/<room_name>/first` mailbox. 
 
-    if something is there, we are the second player, and need to signal to the first in `game/<room_name>/second` mailbox.
+    If something is there, we are the second player, and need to signal to the first in `game/<room_name>/second` mailbox.
 
-    if not, we are the first player, and put something there (to signal for the other player).
+    If not, we are the first player, and put something there (to signal for the other player).
     """
     first_room = 'game/%s/first' % room_name
     value = sm.get_one(first_room)
@@ -36,9 +36,9 @@ def is_first_player(room_name):
         return False
 
 def wait_for_other_player(room_name):
-    """waits for the second player (when we are the first)
+    """Waits for the second player (when we are the first)
 
-    constantly attempts to read from `game/<room_name>/second` mailbox, until it reads something,
+    Constantly attempts to read from `game/<room_name>/second` mailbox, until it reads something,
     which signals the other player has connected and the game can start.
     """
     value = None
@@ -48,9 +48,9 @@ def wait_for_other_player(room_name):
         value = sm.get_one('game/%s/second' % room_name)
 
 def setup_board():
-    """creates the board.
+    """Creates the board.
 
-    board is a list of columns, all of which are empty at the start. As the game progresses, 
+    Board is a list of columns, all of which are empty at the start. As the game progresses, 
     each column will hold the pieces starting from the bottom, i.e. columns are numbered from the bottom.
     """
     board = []
@@ -61,7 +61,7 @@ def setup_board():
     return board
 
 def get_piece(board, col, row):
-    """helper function that returns the piece on the board, or 0 if it doesn't exist"""
+    """Helper function that returns the piece on the board, or 0 if it doesn't exist"""
 
     column = board[col]
     if len(column) > row:
@@ -70,7 +70,7 @@ def get_piece(board, col, row):
         return 0
 
 def get_winner(board):
-    """returns `WE` (1) if we won, `THEY` (-1) if we lost, and 0 if there is no winner"""
+    """Returns `WE` (1) if we won, `THEY` (-1) if we lost, and 0 if there is no winner"""
 
     # first check the verticals
     for col in range(COLUMNS):
@@ -119,9 +119,9 @@ def get_winner(board):
        
 
 def is_game_done(board):
-    """returns true if the game is finished.
+    """Returns true if the game is finished.
     
-    game is finished if either someone won, or the board is full (a tie)
+    Game is finished if either someone won, or the board is full (a tie)
     """
     winner = get_winner(board)
 
@@ -143,7 +143,7 @@ PIECE_SYMBOL = {
 }
 
 def show_board(board):
-    """displays the board. also includes the 1 - 7 numbers under the board to assist in moves
+    """Displays the board. also includes the 1 - 7 numbers under the board to assist in moves
     """
     for row in reversed(range(ROWS)):
         s = ' '
@@ -157,7 +157,7 @@ def show_board(board):
     print(' 1 2 3 4 5 6 7 ')
 
 def get_my_move():
-    """asks the player for a move. a move is a 1 - 7 integer designating a column"""
+    """Asks the player for a move. a move is a 1 - 7 integer designating a column"""
     v = input('Your move [1-7]: ')
     while not v.isdigit() or 1 > int(v) or int(v) > 7:
         v = input('Your move [1-7]: ')
@@ -166,11 +166,11 @@ def get_my_move():
 
 
 def send_move(room_name, box_name, move):
-    """sends a move to `game/<room_name>/move_<box_name>` mailbox"""
+    """Sends a move to `game/<room_name>/move_<box_name>` mailbox"""
     sm.put('game/%s/move_%s' % (room_name, box_name), move)
 
 def get_other_player_move(room_name, box_name):
-    """reads a move from `game/<room_name>/move_<box_name>` mailbox. waits until a message is found"""
+    """Reads a move from `game/<room_name>/move_<box_name>` mailbox. waits until a message is found"""
     value = None
 
     while value is None:
@@ -179,7 +179,7 @@ def get_other_player_move(room_name, box_name):
     return value
 
 def perform_move(move, board, my_turn):
-    """puts a move (1-7) in the board. my_turn is True if it's our move, otherwise it's an opponents move."""
+    """Puts a move (1-7) in the board. my_turn is True if it's our move, otherwise it's an opponents move."""
     if my_turn:
         board[move - 1].append(WE)
     else:
@@ -205,7 +205,7 @@ def show_tie_message():
     print("It's a tie!")
 
 def main():
-    """main method"""
+    """Main method"""
 
     # First, configure the smor library
     # Then ask the player for the name of the game room

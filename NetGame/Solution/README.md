@@ -47,5 +47,5 @@ Then we proceed with the game. The game goes by the rules of Connect Four. For s
   * `game/room_name/move_first` mailbox if you are the first player
   * `game/room_name/move_second` mailbox if you are the second player
 
-and read from the mailbox of the other player for receiving the move.
+and read from the mailbox of the other player for receiving the move. Be sure to keep trying to read until something shows up in the other mailbox - the other player could take some time to play the move.
 

@@ -101,10 +101,7 @@ def make_input(board, player, player_sign):
     #? valid cols and rows are those below, so this is the easiest solution
     valid_fields = ['0', '1', '2']
 
-    #? We want to have them in the main scope so we can return their valid values
-    row = ""
-    col = ""
-
+    
     print(player, " on the move")
 
     valid_input = False
@@ -147,7 +144,7 @@ def tie(board):
     #? Another way this loop can be done is to 
     #? go directly to values which corespond to
     #? dictionary keys.
-    #? we can do that by typing: for key, value in dict.items(): do something
+    #? we can do that by typing: for key, value in dict.items(): do_something
     for pos in BOARD_FIELDS:
         if(board[BOARD_FIELDS[pos]] == EMPTY_SYMBOL):
             all_filled = False
@@ -158,6 +155,9 @@ def check_win(board, sign):
     """
     Checks if the player who had last input has won, returns true or false
     """
+
+    #? Because we are storing array, we know all the possible combinations
+    #? for the won games, so we are just checking all of them
     
     #? All horizontal checks
     if(board[0] == board[1] == board[2] == sign):
@@ -200,49 +200,60 @@ def create_file_path(first_player, second_player):
     file_path = os.path.join(DIR_PATH, file_name)
     return file_path
 
-def file_exists(first_player, second_player):
+def file_path_exists(first_player, second_player):
     """
-    Checks if file exists.
-    If it does, return true, else return false
-
+    Checks if file on the file_path given by player names exists.
+    
+    If it does, returns true, else returns false
     """
     file_path = create_file_path(first_player, second_player)
     return(os.path.isfile(file_path))
+
+def get_valid_file_path(first_player, second_player):
+    """
+    Returns valid file path based on the first_player and second_player
+
+    Valid files are: 
+        - first_player + second_player + FILE_SUFIX
+        - second_player + first_player + FILE_SUFIX
+    
+    If both paths don't exist following file is made: 
+        - first_player + second_player + FILE_SUFIX
+    """
+    valid_file_path = ""
+
+    #? check for file whose name starts with first player
+    if(file_path_exists(first_player, second_player)):
+        print("prvi_drugi")
+        valid_file_path = create_file_path(first_player, second_player)
+    
+    #? check for file whose name starts with second player
+    elif(file_path_exists(second_player, first_player)):
+        print("drugi_drugi")        
+        valid_file_path = create_file_path(second_player, first_player)
+
+    #? If are here, we know that the file doesn't exist yet,
+    #? so we are making file whose name starts with the first player 
+    #? name (could be the second, it doesn't matter)    
+    else:
+        print("ne_postoji")
+        valid_file_path = create_file_path(first_player, second_player)
+
+    return valid_file_path
 
 def record_result(first_player, second_player, winner):
     """
     Records the result for the current game. Tries to write into the 
     file which is named first_player_second_player and which is stored in
     the directory results. 
+    
     If the file with the same name (or with the inverted name) exists, it writes into 
     that file, otherwise makes a new file. 
+    
     File name is all lower case.
     """
 
-    file_path = ""
-    #! FIXME
-    # file_already_exists = False
-
-    # #? check for file whose name starts with first player
-    # if(file_exists(first_player, second_player)):
-    #     print("prvi_drugi")
-    #     file_path = create_file_path(first_player, second_player)
-    #     file_already_exists = True
-    
-    # #? check for file whose name starts with second player
-    # elif(file_exists(second_player, first_player)):
-    #     print("drugi_drugi")        
-    #     file_path = create_file_path(second_player, first_player)
-    #     file_already_exists = True
-
-    # #? If are here, we know that the file doesn't exist yet,
-    # #? so we are making file whose name starts with the first player 
-    # #? name (could be the second, it doesn't matter)    
-    # else:
-    #     print("ne_postoji")
-    file_path = create_file_path(first_player, second_player)
-
-    print("file_path: ", file_path)
+    file_path = get_valid_file_path(first_player, second_player)
 
     first_player_won = 0
     second_player_won  = 0
@@ -261,11 +272,8 @@ def record_result(first_player, second_player, winner):
 
     #? If the file exists, we wanna get existing data, and after that we want to update that data
     if(os.path.isfile(file_path)):
-        print("Otvara se postojeci fajl")
         data = open(file_path, 'r+')
-
         games_data = data.readlines()
-        print(games_data)
         first_player_wins = int(games_data[0])
         second_player_wins = int(games_data[1])
         ties = int(games_data[2])
@@ -283,7 +291,6 @@ def record_result(first_player, second_player, winner):
     #? if the file doesn't exist, we want to create new file and write
     #? just the data from the latest game
     else:
-        print("Pravi se novi fajl")
         data = open(file_path, "w")
         data.writelines(str(first_player_won) + "\n")
         data.writelines(str(second_player_won) + "\n")
@@ -339,6 +346,7 @@ def ask_for_another_game():
         return False
 
 def main():    
+    
     display_welcome_message()
     first_player, second_player = get_player_names()
     playing_again = True
@@ -376,9 +384,8 @@ def main():
             print("Winner is: ", winner)
 
         record_result(first_player, second_player, winner)
-
-
         display_current_stats(first_player, second_player)
+        
         playing_again = ask_for_another_game()
     
 

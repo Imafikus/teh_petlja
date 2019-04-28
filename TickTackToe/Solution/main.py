@@ -4,7 +4,7 @@ C_ROWS = 3
 C_COLS = 3
 EMPTY_SYMBOL = ' - '
 DIR_PATH = "results"
-FILE_SUFIX = ".txt"
+FILE_EXTENSION = ".txt"
 
 #? Used to map 2D coordinates to 1D array we use for board representation
 BOARD_FIELDS = {
@@ -155,7 +155,6 @@ def check_win(board, sign):
     """
     Checks if the player who had last input has won, returns true or false
     """
-
     #? Because we are storing array, we know all the possible combinations
     #? for the won games, so we are just checking all of them
     
@@ -193,53 +192,14 @@ def check_win(board, sign):
 def create_file_path(first_player, second_player):
     """
     Creates appropriate file path as stated in the specification
-    File path is: first_player+second_player+FILE_SUFIX 
-    Returns that file as a string
+    
+    File path is: first_player + second_player + FILE_EXTENSION 
+    
+    Returns that file as a string.
     """
-    file_name = first_player.lower() + second_player.lower() + FILE_SUFIX
+    file_name = first_player.lower() + second_player.lower() + FILE_EXTENSION
     file_path = os.path.join(DIR_PATH, file_name)
     return file_path
-
-def file_path_exists(first_player, second_player):
-    """
-    Checks if file on the file_path given by player names exists.
-    
-    If it does, returns true, else returns false
-    """
-    file_path = create_file_path(first_player, second_player)
-    return(os.path.isfile(file_path))
-
-def get_valid_file_path(first_player, second_player):
-    """
-    Returns valid file path based on the first_player and second_player
-
-    Valid files are: 
-        - first_player + second_player + FILE_SUFIX
-        - second_player + first_player + FILE_SUFIX
-    
-    If both paths don't exist following file is made: 
-        - first_player + second_player + FILE_SUFIX
-    """
-    valid_file_path = ""
-
-    #? check for file whose name starts with first player
-    if(file_path_exists(first_player, second_player)):
-        print("prvi_drugi")
-        valid_file_path = create_file_path(first_player, second_player)
-    
-    #? check for file whose name starts with second player
-    elif(file_path_exists(second_player, first_player)):
-        print("drugi_drugi")        
-        valid_file_path = create_file_path(second_player, first_player)
-
-    #? If are here, we know that the file doesn't exist yet,
-    #? so we are making file whose name starts with the first player 
-    #? name (could be the second, it doesn't matter)    
-    else:
-        print("ne_postoji")
-        valid_file_path = create_file_path(first_player, second_player)
-
-    return valid_file_path
 
 def record_result(first_player, second_player, winner):
     """
@@ -252,8 +212,7 @@ def record_result(first_player, second_player, winner):
     
     File name is all lower case.
     """
-
-    file_path = get_valid_file_path(first_player, second_player)
+    file_path = create_file_path(first_player, second_player)
 
     first_player_won = 0
     second_player_won  = 0
@@ -305,12 +264,14 @@ def display_current_stats(first_player, second_player):
     - Number of wins for the second player, win percentage of the second player
     - Number of tied games, tie games percentage
     """
-    print("display_current_stats")
-
     file_path = create_file_path(first_player, second_player)
     data = open(file_path, "r")
+    #? Readlines will get all the lines in the file (lines are separated by '\n' sign)
     games_data = data.readlines()
+    data.close()
 
+    #? Because we know what's the structure of the file in the result
+    #? we know which data comes first
     first_player_wins = int(games_data[0])
     second_player_wins = int(games_data[1])
     tied_games = int(games_data[2])
@@ -327,10 +288,10 @@ def display_current_stats(first_player, second_player):
 
 def ask_for_another_game():
     """
-    Asks the players if they want to play another game
-    returns boolean
+    Asks the players if they want to play another game.
+    
+    Returns true if they want, false otherwise
     """
-
     valid_answers = ["y", "n"]
     answer = ""
     
@@ -406,9 +367,12 @@ def main():
         #? Check if the player has won
     
     #? When the game is finished, result is saved in /results folder
-    #? IMPORTANT: Every pair of players must have his own .txt files (order of the players is irrelevant), player names are not case sensitive
+    #? IMPORTANT: Every pair of players must have its own .txt files (order of the players is relevant), player names are not case sensitive
     #? If the .txt file already exist, it must be updated with the new results
-    #? Example file you can use as pattern (but you don't have to) is example_saved_data.txt
+    #? Data in the file is in the following order:
+        #? - Number of wins for the first player
+        #? - Number of wins for the second player
+        #? - Number of tied games
 
     #? Appropriate message is displayed after the game has finished (based on who won, or if it was a tie)
     #? After that all games statistics are shown in the following format:

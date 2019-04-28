@@ -3,6 +3,7 @@ import smor.client as sm
 COLUMNS = 7
 ROWS = 6
 
+# WE and THEY are used to mark our and opponent's pieces on the board
 WE = 1
 THEY = -1
 
@@ -136,6 +137,10 @@ def is_game_done(board):
 
     return is_full
 
+# symbols to display for each player. 
+# 
+# we could swap WE and THEY when we are the second player
+# to give the same experience for both players.
 PIECE_SYMBOL = {
     WE: '@',
     THEY: 'X',
@@ -145,6 +150,9 @@ PIECE_SYMBOL = {
 def show_board(board):
     """Displays the board. also includes the 1 - 7 numbers under the board to assist in moves
     """
+
+    # `range(n)` returns numbers 0, 1, ..., n-1
+    # which is perfect for indexing lists of `n` elements
     for row in reversed(range(ROWS)):
         s = ' '
         for col in range(COLUMNS):

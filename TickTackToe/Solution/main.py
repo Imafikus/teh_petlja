@@ -105,19 +105,19 @@ def make_input(board, player, player_sign):
     print(player, " on the move")
 
     valid_input = False
-    while(not valid_input):
+    while not valid_input:
 
         player_input = input("Please input row and column, separated by space: ")
         player_input = player_input.split(" ")
         
-        if(len(player_input) != 2): 
+        if len(player_input) != 2: 
             print("You must enter 2 valid fields separated by space, try again")
             continue
         
         row = player_input[0]
         col = player_input[1]
 
-        if((row not in valid_fields or col not in valid_fields)):
+        if row not in valid_fields or col not in valid_fields:
             print("You must enter 2 valid fields, try again")
             continue
         
@@ -141,12 +141,9 @@ def tie(board):
     """
     all_filled = True
     
-    #? Another way this loop can be done is to 
-    #? go directly to values which corespond to
-    #? dictionary keys.
-    #? we can do that by typing: for key, value in dict.items(): do_something
-    for pos in BOARD_FIELDS:
-        if(board[BOARD_FIELDS[pos]] == EMPTY_SYMBOL):
+    #? BOARD_FIELD values will be numbers which corespond to some index of the board array
+    for field in BOARD_FIELDS.values():
+        if board[field] == EMPTY_SYMBOL:
             all_filled = False
 
     return  all_filled
@@ -159,31 +156,31 @@ def check_win(board, sign):
     #? for the won games, so we are just checking all of them
     
     #? All horizontal checks
-    if(board[0] == board[1] == board[2] == sign):
+    if board[0] == board[1] == board[2] == sign:
         return True
     
-    if(board[3] == board[4] == board[5] == sign):
+    if board[3] == board[4] == board[5] == sign:
         return True
     
-    if(board[6] == board[7] == board[8] == sign):
+    if board[6] == board[7] == board[8] == sign:
         return True
 
     #? All vertical checks
-    if(board[0] == board[3] == board[6] == sign):
+    if board[0] == board[3] == board[6] == sign:
         return True
     
-    if(board[1] == board[4] == board[7] == sign):
+    if board[1] == board[4] == board[7] == sign:
         return True
 
-    if(board[2] == board[5] == board[8] == sign):
+    if board[2] == board[5] == board[8] == sign:
         return True
 
     #? upper left to lower right diagonal check
-    if(board[0] == board[4] == board[8] == sign):
+    if board[0] == board[4] == board[8] == sign:
         return True
 
     #? upper right to lower left diagonal check
-    if(board[2] == board[4] == board[6] == sign):
+    if board[2] == board[4] == board[6] == sign:
         return True
 
     #? If we are here, we know for sure that win hasn't happened
@@ -230,7 +227,7 @@ def record_result(first_player, second_player, winner):
         tie += 1
 
     #? If the file exists, we wanna get existing data, and after that we want to update that data
-    if(os.path.isfile(file_path)):
+    if os.path.isfile(file_path):
         data = open(file_path, 'r+')
         games_data = data.readlines()
         first_player_wins = int(games_data[0])
@@ -295,11 +292,11 @@ def ask_for_another_game():
     valid_answers = ["y", "n"]
     answer = ""
     
-    while(answer not in valid_answers):
+    while answer not in valid_answers:
         print("Do you want to play another game [y / n]?")
         answer = input()
     
-    if(answer.lower() == "y"):
+    if answer.lower() == "y":
         print("Starting a new game!")
         return True
     else:
@@ -312,7 +309,7 @@ def main():
     first_player, second_player = get_player_names()
     playing_again = True
 
-    while(playing_again):
+    while playing_again:
         
         winner = ""    
         signs = create_signs(first_player, second_player)    
@@ -320,12 +317,12 @@ def main():
 
         first_player_move = True
         
-        while(not tie(board) and winner == ""):
+        while not tie(board) and winner == "":
             
-            if(first_player_move):
+            if first_player_move:
                 make_input(board, first_player, signs[first_player])
                 
-                if(check_win(board, signs[first_player])):
+                if check_win(board, signs[first_player]):
                     winner = first_player
                 
                 first_player_move = False
@@ -333,12 +330,12 @@ def main():
             else:
                 make_input(board, second_player, signs[second_player])
                 
-                if(check_win(board, signs[second_player])):
+                if check_win(board, signs[second_player]):
                     winner = second_player
                 
                 first_player_move = True
             
-        if(winner == ""):
+        if winner == "":
             print("It's a tie!")
             
         else:

@@ -6,7 +6,7 @@ Each task has 3 levels, based on the programming skills you have, you can choose
 
 ### Easy
 
-These levels are intended for complete begginers. Every task has all it's functions written, you just need to call existing functions in the correct order inside the main(). 
+These levels are intended for complete beginners. Every task has all it's functions written, you just need to call existing functions in the correct order inside the `main()`. 
 
 ### Medium
 

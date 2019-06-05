@@ -33,4 +33,4 @@ Usage of Google, StackOverflow and Python Docs is strongly encouraged.
 
 ## Code style
 
-We are using `snake_case` and w"""docstrings"""` **are mandatory**. Constant names are all `UPPERCASE`. 
+We are using `snake_case` and `"""docstrings"""` **are mandatory**. Constant names are all `UPPERCASE`. 

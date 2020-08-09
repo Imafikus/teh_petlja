@@ -9,7 +9,7 @@ THEY = -1
 
 def configure_smor():
     """Sets up the SMOR library configuration"""
-    sm.config('lambda-lab.cf')
+    sm.config('smor.cloud.magija.rs')
 
 def get_room_name():
     """Asks the player for game room name, and returns it"""

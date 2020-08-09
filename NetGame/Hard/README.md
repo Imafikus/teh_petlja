@@ -16,7 +16,7 @@ A simple game of 4-in-a-row / Connect Four [(wikipedia)](https://en.wikipedia.or
     sm.config(hostname)
     ```
 
-    We have a server running at `lambda-lab.cf`, that can be used for this game.
+    We have a server running at `smor.cloud.magija.rs`, that can be used for this game.
 
 `smor` uses "mailboxes" to pass around messages. Think of them as actual boxes which sit on the server, and you can `put` messages into them, or `get` messages out. Once you `get` the message it's gone from the box - you can't get it again so be sure to store it in a variable as long as you need it. Also messages are retrieved in the same order they are put in - First In, First Out.
 
